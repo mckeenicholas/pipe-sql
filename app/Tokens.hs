@@ -1,13 +1,10 @@
 {-# LANGUAGE LambdaCase #-}
 module Tokens where
 
--- Main token type that encompasses all possible tokens
-import Text.ParserCombinators.ReadP (string)
-import Data.Map (Map, fromList, lookup)
+import Data.Map (Map, fromList)
 import Data.Char (toUpper)
 import qualified Data.Map as Map
 
--- All possible token types
 data Token = 
     TIdentifier String    -- Regular identifiers
   | TKeyword Keyword     -- SQL keywords
@@ -50,7 +47,6 @@ data Keyword =
   | Aggregate
   deriving (Show, Ord, Eq)
 
--- Operators (combining binary and unary)
 data Operator =
     -- Binary operators
     Equals            -- =
@@ -66,7 +62,6 @@ data Operator =
   | Not              -- NOT
   deriving (Show, Eq)
 
--- Special symbols
 data Symbol =
     LeftParen        -- (
   | RightParen       -- )
@@ -80,7 +75,7 @@ data Literal =
   | BoolLit Bool
   | NullLit
   deriving (Show, Eq)
--- Bidirectional maps for keywords
+
 keywordToStringMap :: Map Keyword String
 keywordToStringMap = fromList [ 
     (Select, "SELECT"),
@@ -116,17 +111,14 @@ keywordToStringMap = fromList [
 stringToKeywordMap :: Map String Keyword
 stringToKeywordMap = fromList [(str, kw) | (kw, str) <- Map.toList keywordToStringMap]
 
--- Convert Keyword to String
 keywordToString :: Keyword -> String
 keywordToString kw = case Map.lookup kw keywordToStringMap of
     Just str -> str
     Nothing -> error $ "Invalid keyword: " ++ show kw
 
--- Convert String to Maybe Keyword
 stringToKeyword :: String -> Maybe Keyword
 stringToKeyword str = Map.lookup (map toUpper str) stringToKeywordMap
 
--- Helper function to convert operators to strings
 operatorToString :: Operator -> String
 operatorToString = \case
     Equals -> "="
@@ -140,7 +132,6 @@ operatorToString = \case
     Or -> "OR"
     Not -> "NOT"
 
--- Helper function to convert symbols to strings
 symbolToString :: Symbol -> String
 symbolToString = \case
     LeftParen -> "("

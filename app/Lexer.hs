@@ -4,7 +4,7 @@ import Data.Char (isAlpha, isDigit, isSpace, toUpper)
 import Data.List (isPrefixOf)
 import Tokens
 
--- Main tokenize function
+-- Convert SQL statement to a list of tokens
 tokenize :: String -> [Token]
 tokenize str = 
     let input = removeLeadingWhitespace str in
@@ -36,14 +36,12 @@ matchOperator word = case word of
     "LIKE" -> Just Like
     _ -> Nothing
 
--- Helper function to remove leading whitespace
 removeLeadingWhitespace :: String -> String
 removeLeadingWhitespace [] = []
 removeLeadingWhitespace (x:xs)
     | isSpace x = removeLeadingWhitespace xs
     | otherwise = x:xs
 
--- Lex an identifier or keyword
 lexIdentifier :: String -> [Token]
 lexIdentifier str = 
     let (ident, rest) = span isIdentChar str
@@ -53,14 +51,12 @@ lexIdentifier str =
             Nothing -> TIdentifier ident
     in token : tokenize rest
 
--- Lex a number
 lexNumber :: String -> [Token]
 lexNumber str =
     let (numStr, rest) = span (\c -> isDigit c || c == '.') str
         num = read numStr :: Double
     in TLiteral (NumberLit num) : tokenize rest
 
--- Lex a string
 lexString :: String -> [Token]
 lexString (quote:rest) =
     let (str, remaining) = break (== quote) rest
@@ -70,7 +66,6 @@ lexString (quote:rest) =
             TLiteral (StringLit str) : tokenize rest'
 lexString [] = error "Expected string literal"
 
--- Lex an operator
 lexOperator :: String -> [Token]
 lexOperator str = 
     let operators = [
@@ -86,7 +81,6 @@ lexOperator str =
         Just (op, rest) -> TOperator op : tokenize rest
         Nothing -> error $ "Invalid operator at: " ++ take 10 str
 
--- Helper function to find matching operator
 findOperator :: [(String, Operator)] -> String -> Maybe (Operator, String)
 findOperator [] _ = Nothing
 findOperator ((opStr, op):rest) input

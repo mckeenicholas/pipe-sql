@@ -99,8 +99,7 @@ newtype WhereClause = WhereClause {
     condition :: Expr
 } deriving (Show, Eq)
 
--- Binary and Unary operators (you'll need to define these)
-data BinOp = And | Or | Plus | Minus | Multiply | Divide -- Add more as needed
+data BinOp = And | Or | Plus | Minus | Multiply | Divide
   deriving (Show, Eq)
 
 data UnaryOp = Not | Negate
